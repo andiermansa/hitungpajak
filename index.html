@@ -1,79 +1,156 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <title>Kalkulator PPN 12% & PPh 22</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
-            padding: 40px;
-        }
-        .container {
-            max-width: 500px;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin: auto;
-        }
-        h2 {
-            text-align: center;
-        }
-        label {
-            font-weight: bold;
-        }
-        input {
-            width: 100%;
-            padding: 8px;
-            margin: 8px 0 15px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .result {
-            margin-top: 20px;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            display: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulator PPN 12% & PPh 22</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    margin: 0;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #2a5298;
+}
+
+label {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0 18px 0;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+input:focus {
+    border-color: #2a5298;
+    outline: none;
+    box-shadow: 0 0 5px rgba(42,82,152,0.3);
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: 0.3s;
+}
+
+.btn-primary {
+    background: #2a5298;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #1e3c72;
+}
+
+.btn-secondary {
+    background: #e0e0e0;
+}
+
+.btn-secondary:hover {
+    background: #c6c6c6;
+}
+
+.result {
+    margin-top: 20px;
+    background: #f4f6fb;
+    padding: 15px;
+    border-radius: 15px;
+    display: none;
+}
+
+.result p {
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+.result strong {
+    float: right;
+}
+
+.footer {
+    text-align: center;
+    font-size: 12px;
+    margin-top: 15px;
+    color: #777;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+/* Mobile optimization */
+@media (max-width: 480px) {
+    .card {
+        padding: 20px;
+    }
+}
+</style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Kalkulator PPN 12% & PPh 22</h2>
+<div class="card">
+    <h2>Kalkulator Pajak</h2>
 
-    <label>Nilai Belanja (Sudah termasuk PPN)</label>
-    <input type="text" id="nilaiBelanja" placeholder="Masukkan nilai belanja">
+    <label>Nilai Belanja (Termasuk PPN 11%)</label>
+    <input type="text" id="nilaiBelanja" placeholder="Contoh: 11.100.000">
 
-    <button onclick="hitungPajak()">Hitung Pajak</button>
+    <button class="btn-primary" onclick="hitungPajak()">Hitung Pajak</button>
+    <button class="btn-secondary" onclick="resetForm()">Reset</button>
 
     <div class="result" id="hasil">
-        <p><strong>DPP (100/111):</strong> Rp <span id="dpp"></span></p>
-        <p><strong>PPN 12%:</strong> Rp <span id="ppn"></span></p>
-        <p><strong>PPh 22 (1,5%):</strong> Rp <span id="pph22"></span></p>
-        <p><strong>Total Bayar + PPh22:</strong> Rp <span id="total"></span></p>
+        <p>DPP (100/111) <strong>Rp <span id="dpp"></span></strong></p>
+        <p>PPN 12% <strong>Rp <span id="ppn"></span></strong></p>
+        <p>PPh 22 (1,5%) <strong>Rp <span id="pph22"></span></strong></p>
+        <hr>
+        <p>Total Bayar + PPh22 <strong>Rp <span id="total"></span></strong></p>
+    </div>
+
+    <div class="footer">
+        © 2026 Kalkulator Pajak
     </div>
 </div>
 
 <script>
 const inputBelanja = document.getElementById("nilaiBelanja");
 
-// Format otomatis titik ribuan saat mengetik
-inputBelanja.addEventListener("input", function(e) {
+inputBelanja.addEventListener("input", function() {
     let value = this.value.replace(/\D/g, "");
     this.value = new Intl.NumberFormat("id-ID").format(value);
 });
@@ -94,14 +171,11 @@ function hitungPajak() {
         return;
     }
 
-    // DPP
     let dpp = nilaiBelanja * (100/111);
 
-    // PPN sesuai rumus sebelumnya
     let dppPenyesuaian = dpp * (11/12);
     let ppn = dppPenyesuaian * 0.12;
 
-    // PPh 22 sesuai instruksi baru
     let pph22 = dpp * 0.015;
 
     let total = nilaiBelanja + pph22;
@@ -112,6 +186,11 @@ function hitungPajak() {
     document.getElementById("total").innerText = formatRupiah(total);
 
     document.getElementById("hasil").style.display = "block";
+}
+
+function resetForm() {
+    inputBelanja.value = "";
+    document.getElementById("hasil").style.display = "none";
 }
 </script>
 
