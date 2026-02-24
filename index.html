@@ -140,7 +140,7 @@ button {
         <p>PPh 22 (1,5%) <strong>Rp <span id="pph22"></span></strong></p>
         
         <hr>
-        <p>Nilai Belanja + Pajak <strong>Rp <span id="total"></span></strong></p> 
+        <p>Total Pajak <strong>Rp <span id="total"></span></strong></p> 
         
  
     </div>
@@ -181,7 +181,7 @@ function hitungPajak() {
 
     let pph22 = dpp * 0.015;
 
-    let total = nilaiBelanja + pph22 + ppn;
+    let total = pph22 + ppn;
 
     document.getElementById("dpp").innerText = formatRupiah(dpp);
     document.getElementById("ppn").innerText = formatRupiah(ppn);
