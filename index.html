@@ -19,7 +19,6 @@
         }
         h2 {
             text-align: center;
-            margin-bottom: 20px;
         }
         label {
             font-weight: bold;
@@ -48,9 +47,7 @@
             background: #f8f9fa;
             padding: 15px;
             border-radius: 5px;
-        }
-        .result p {
-            margin: 5px 0;
+            display: none;
         }
     </style>
 </head>
@@ -59,43 +56,57 @@
 <div class="container">
     <h2>Kalkulator PPN 12% & PPh 22</h2>
 
-    <label>Nilai Belanja Yang Kena Pajak</label>
-    <input type="number" id="dpp" placeholder="Masukkan nilai DPP">
-
-    <label>Tarif PPh 22 (%)</label>
-    <input type="number" id="pph22Rate" placeholder="Contoh: 1.5">
+    <label>Nilai Belanja (Sudah termasuk PPN 11%)</label>
+    <input type="text" id="nilaiBelanja" placeholder="Masukkan nilai belanja">
 
     <button onclick="hitungPajak()">Hitung Pajak</button>
 
-    <div class="result" id="hasil" style="display:none;">
+    <div class="result" id="hasil">
+        <p><strong>DPP (100/111):</strong> Rp <span id="dpp"></span></p>
         <p><strong>PPN 12%:</strong> Rp <span id="ppn"></span></p>
-        <p><strong>PPh 22:</strong> Rp <span id="pph22"></span></p>
-        <p><strong>Total Bayar:</strong> Rp <span id="total"></span></p>
+        <p><strong>PPh 22 (1,5%):</strong> Rp <span id="pph22"></span></p>
+        <p><strong>Total Bayar + PPh22:</strong> Rp <span id="total"></span></p>
     </div>
 </div>
 
 <script>
+const inputBelanja = document.getElementById("nilaiBelanja");
+
+// Format otomatis titik ribuan saat mengetik
+inputBelanja.addEventListener("input", function(e) {
+    let value = this.value.replace(/\D/g, "");
+    this.value = new Intl.NumberFormat("id-ID").format(value);
+});
+
+function getNumericValue(value) {
+    return parseFloat(value.replace(/\./g, ""));
+}
+
 function formatRupiah(angka) {
-    return angka.toLocaleString("id-ID");
+    return new Intl.NumberFormat("id-ID").format(Math.round(angka));
 }
 
 function hitungPajak() {
-    let nilaiBelanja = parseFloat(document.getElementById("dpp").value);
-    let pph22Rate = parseFloat(document.getElementById("pph22Rate").value);
+    let nilaiBelanja = getNumericValue(inputBelanja.value);
 
-    if (isNaN(nilaiBelanja) || isNaN(pph22Rate)) {
-        alert("Harap isi semua field dengan benar.");
+    if (isNaN(nilaiBelanja) || nilaiBelanja <= 0) {
+        alert("Masukkan nilai belanja yang valid.");
         return;
     }
 
-    // Rumus PPN sesuai instruksi
+    // DPP
     let dpp = nilaiBelanja * (100/111);
+
+    // PPN sesuai rumus sebelumnya
     let dppPenyesuaian = dpp * (11/12);
     let ppn = dppPenyesuaian * 0.12;
 
-    let pph22 = nilaiBelanja * (pph22Rate / 100);
-    let total = nilaiBelanja + pph22; // karena PPN sudah termasuk dalam nilai belanja
+    // PPh 22 sesuai instruksi baru
+    let pph22 = dpp * 0.015;
 
+    let total = nilaiBelanja + pph22;
+
+    document.getElementById("dpp").innerText = formatRupiah(dpp);
     document.getElementById("ppn").innerText = formatRupiah(ppn);
     document.getElementById("pph22").innerText = formatRupiah(pph22);
     document.getElementById("total").innerText = formatRupiah(total);
