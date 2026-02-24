@@ -59,7 +59,7 @@
 <div class="container">
     <h2>Kalkulator PPN 12% & PPh 22</h2>
 
-    <label>Nilai DPP (Dasar Pengenaan Pajak)</label>
+    <label>Nilai Belanja Yang Kena Pajak</label>
     <input type="number" id="dpp" placeholder="Masukkan nilai DPP">
 
     <label>Tarif PPh 22 (%)</label>
@@ -80,17 +80,21 @@ function formatRupiah(angka) {
 }
 
 function hitungPajak() {
-    let dpp = parseFloat(document.getElementById("dpp").value);
+    let nilaiBelanja = parseFloat(document.getElementById("dpp").value);
     let pph22Rate = parseFloat(document.getElementById("pph22Rate").value);
 
-    if (isNaN(dpp) || isNaN(pph22Rate)) {
+    if (isNaN(nilaiBelanja) || isNaN(pph22Rate)) {
         alert("Harap isi semua field dengan benar.");
         return;
     }
 
-    let ppn = dpp * 0.12;
-    let pph22 = dpp * (pph22Rate / 100);
-    let total = dpp + ppn + pph22;
+    // Rumus PPN sesuai instruksi
+    let dpp = nilaiBelanja * (100/111);
+    let dppPenyesuaian = dpp * (11/12);
+    let ppn = dppPenyesuaian * 0.12;
+
+    let pph22 = nilaiBelanja * (pph22Rate / 100);
+    let total = nilaiBelanja + pph22; // karena PPN sudah termasuk dalam nilai belanja
 
     document.getElementById("ppn").innerText = formatRupiah(ppn);
     document.getElementById("pph22").innerText = formatRupiah(pph22);
